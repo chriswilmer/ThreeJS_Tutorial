@@ -1,0 +1,33 @@
+<!doctype html>
+<head>
+  <title>A cube in three.js</title>
+</head>
+
+<body>
+
+<script src="js/three.min.js"></script>
+<script src="js/OrbitControls.js"></script>
+
+<script>
+  // Our 3d code will go here
+
+  var scene, camera, renderer;
+
+  init();
+  animate();
+
+  function init() {
+
+    scene = new THREE.Scene();
+    var WIDTH = window.innerWidth;
+    var HEIGHT = window.innerHeight;
+
+    renderer = new THREE.WebGLRenderer({antialias:true});
+    renderer.setSize(WIDTH, HEIGHT);
+    document.body.appendChild(renderer.domElement);
+    
+  }
+
+</script>
+
+</body>
