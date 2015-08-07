@@ -1,73 +1,96 @@
 <!doctype html>
+<html>
+
 <head>
-  <title>A cube in three.js</title>
+  <title>Three.js tutorial</title>
 </head>
 
 <body>
 
-<script src="js/three.js"></script>
-<script src="js/OrbitControls.js"></script>
+  <script src="js/three.min.js"></script>
+  <script src="js/OrbitControls.js"></script>
 
-<script>
-  // Our 3d code will go here
+  <script>
 
-  var scene, camera, renderer;
+	// Set up the scene, camera, and renderer as global variables.
+	var scene, camera, renderer;
+	var atoms = [];
+	var numatoms = 10;
 
-  init();
-  animate();
+	init();
+	animate();
 
-  // Initialize environment
-  function init() {
+	// Sets up the scene.
+	function init() {
 
-    // Create new scene
-    scene = new THREE.Scene();
-    var WIDTH = window.innerWidth;
-    var HEIGHT = window.innerHeight;
+	// Create the scene and set the scene size.
+	scene = new THREE.Scene();
+	var WIDTH = window.innerWidth,
+	 HEIGHT = window.innerHeight;
 
-    // Define renderer
-    renderer = new THREE.WebGLRenderer({antialias:true});
-    renderer.setSize(WIDTH, HEIGHT);
-    document.body.appendChild(renderer.domElement);
+	// Create a renderer and add it to the DOM.
+	renderer = new THREE.WebGLRenderer({antialias:true});
+	renderer.setSize(WIDTH, HEIGHT);
+	document.body.appendChild(renderer.domElement);
 
-    // Define camera
-    camera = new THREE.PerspectiveCamera(45, WIDTH / HEIGHT, 0.1, 20000);
-    camera.position.set(0,6,0);
-    scene.add(camera);
+	// Create a camera, zoom it out from the model a bit, and add it to the scene.
+	camera = new THREE.PerspectiveCamera(45, WIDTH / HEIGHT, 0.1, 20000);
+	camera.position.set(0,10,0);
+	scene.add(camera);
 
-    // ignoring what happens when you resize the window, but there is code that deals with this
+	// Set the background color of the scene.
+	renderer.setClearColorHex(0xFFFFFF, 1);
 
-    // Define light + background color
-    renderer.setClearColorHex(0xFFFFFF, 1); //white background
-    var light = new THREE.PointLight(0xFFFFFF);
-    light.position.set(-100,200,100);
-    scene.add(light);
+	// Create a light, set its position, and add it to the scene.
+	var light = new THREE.PointLight(0xffffff);
+	light.position.set(-100,200,100);
+	scene.add(light);
+	
+	// Add geometry, define sphere object
+	var sphereMesh = new THREE.SphereGeometry(1,16,16);
+	var sphereMaterial = new THREE.MeshLambertMaterial({color: 0xCC0000}); // Red sphere
+	
+	for (i = 1; i <= numatoms; i++) { 
+		var tempSphere = new THREE.Mesh(sphereMesh, sphereMaterial);
+		tempSphere.name = "sphere" + i;
+		tempSphere.position.z = -10 + 2*i;
+		scene.add(tempSphere);
+		atoms.push(tempSphere);
+	}
+	
+	var cube = new THREE.BoxHelper();
+	cube.material.color.setRGB( 1, 0, 0 );
+	cube.scale.set( 10, 10, 10 );
+	scene.add( cube );
 
-    // Add geometry, two spheres
-    var sphereMesh = new THREE.SphereGeometry(4,16,16);
-    var sphereMaterial = new THREE.MeshLambertMaterial({color: 0xCC0000}); // Red sphere
-    var redsphere = new THREE.Mesh(sphereMesh, sphereMaterial);
-    scene.add(redsphere);
+	// Add OrbitControls so that we can pan around with the mouse.
+	controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-    redsphere.position = new THREE.Vector3(-3,0,0);
-    var sphereMesh = new THREE.SphereGeometry(4,16,16);
-    var sphereMaterial = new THREE.MeshLambertMaterial({color: 0x0000CC}); // Blue sphere
-    var bluesphere = new THREE.Mesh(sphereMesh, sphereMaterial);
-    scene.add(bluesphere);
-    bluesphere.position = new THREE.Vector3(3,0,0);
+	}
 
-    // Add OrbitControls so that we can pan around with the mouse.
-    controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-    //done
-  }
+	// Renders the scene and updates the render as needed.
+	function animate() {
 
-  function animate() {
-    requestAnimationFrame(animate);
+	// Read more about requestAnimationFrame at http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
+	requestAnimationFrame(animate);
+	
+	var sphere = scene.getObjectByName( "sphere2", true );
+	sphere.position.x -= 0.1;
+	
+	atoms[4].position.x += 0.01;
+	
+	if (sphere.position.x < -10) { 
+		sphere.position.x += 20;
+	}
+	
+	// Render the scene.
+	renderer.render(scene, camera);
+	controls.update();
 
-    renderer.render(scene, camera);
-    controls.update();
-  }
+	}
 
-</script>
+  </script>
 
 </body>
+</html>
