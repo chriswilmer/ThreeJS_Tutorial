@@ -5,7 +5,7 @@
 
 <body>
 
-<script src="js/three.min.js"></script>
+<script src="js/three.js"></script>
 <script src="js/OrbitControls.js"></script>
 
 <script>
@@ -16,16 +16,56 @@
   init();
   animate();
 
+  // Initialize environment
   function init() {
 
+    // Create new scene
     scene = new THREE.Scene();
     var WIDTH = window.innerWidth;
     var HEIGHT = window.innerHeight;
 
+    // Define renderer
     renderer = new THREE.WebGLRenderer({antialias:true});
     renderer.setSize(WIDTH, HEIGHT);
     document.body.appendChild(renderer.domElement);
-    
+
+    // Define camera
+    camera = new THREE.PerspectiveCamera(45, WIDTH / HEIGHT, 0.1, 20000);
+    camera.position.set(0,6,0);
+    scene.add(camera);
+
+    // ignoring what happens when you resize the window, but there is code that deals with this
+
+    // Define light + background color
+    renderer.setClearColorHex(0xFFFFFF, 1); //white background
+    var light = new THREE.PointLight(0xFFFFFF);
+    light.position.set(-100,200,100);
+    scene.add(light);
+
+    // Add geometry, two spheres
+    var sphereMesh = new THREE.SphereGeometry(4,16,16);
+    var sphereMaterial = new THREE.MeshLambertMaterial({color: 0xCC0000}); // Red sphere
+    var redsphere = new THREE.Mesh(sphereMesh, sphereMaterial);
+    scene.add(redsphere);
+
+    redsphere.position = new THREE.Vector3(-3,0,0);
+    var sphereMesh = new THREE.SphereGeometry(4,16,16);
+    var sphereMaterial = new THREE.MeshLambertMaterial({color: 0x0000CC}); // Blue sphere
+    var bluesphere = new THREE.Mesh(sphereMesh, sphereMaterial);
+    scene.add(bluesphere);
+    bluesphere.position = new THREE.Vector3(3,0,0);
+
+    // Add OrbitControls so that we can pan around with the mouse.
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+    //done
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+
+    renderer.render(scene, camera);
+    controls.update();
   }
 
 </script>
